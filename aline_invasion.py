@@ -47,16 +47,13 @@ class AlineInvasion:
         self.ship = Ship(self)   
         
         #创建存储子弹的编组
-        self.bullets = pygame.sprite.Group()  
-    
+        self.bullets = pygame.sprite.Group() 
+        self.fire_bullet = False   #子弹添加使能初始化
     def screen_color(self):
-        ''' 设置背景颜色随机改变+延时'''    
+        ''' 设置背景颜色随机改变'''  
         self.bg_color[0] = randint(0,255)
         self.bg_color[1] = randint(0,255)
         self.bg_color[2] = randint(0,255)
-        
-        for number in range(1,10000000): 
-            ""  
 
     def _check_keydown_events(self,event): #必须使用event形参输入，否则代码块中的event会出现未定义情况
         '''判断按键按下事件'''
@@ -72,7 +69,8 @@ class AlineInvasion:
         elif event.key == pygame.K_q:  
             sys.exit()
         elif event.key == pygame.K_SPACE:
-            self._fire_bullet()
+            self.fire_bullet = True
+            # self._fire_bullet()
 
     def _check_keyup_events(self,event):
         '''判断按键弹起事件'''
@@ -83,12 +81,15 @@ class AlineInvasion:
         elif event.key == pygame.K_UP:
             self.ship.moving_up = False
         elif event.key == pygame.K_DOWN:
-            self.ship.moving_down = False   
+            self.ship.moving_down = False 
+        elif event.key == pygame.K_SPACE:
+            self.fire_bullet = False 
 
     def _fire_bullet(self):
         '''创建一颗子弹，将其加入编组当中'''
-        new_bullet = Bullet(self) #创建子弹
-        self.bullets.add(new_bullet) #加入编组
+        if self.fire_bullet == True:  #按下空格连续创建子弹
+            new_bullet = Bullet(self) #创建子弹
+            self.bullets.add(new_bullet) #加入编组
 
     def _check_events(self):
         '''响应按键和鼠标事件（重要）'''
@@ -121,6 +122,7 @@ class AlineInvasion:
             self._check_events()
             # self.screen_color() #背景颜色变更
             self.ship.update()
+            self._fire_bullet()
             self.bullets.update() #对编组调用update(),编组自动对其中每个对象调用update()
             self._update_screen()
 

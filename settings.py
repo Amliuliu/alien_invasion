@@ -13,7 +13,7 @@ class Settings:
         self.bullet_speed = 0.5  #子弹速度
         self.bullet_width = 3    #子弹宽度
         self.bullet_height = 15  #子弹长度
-        self.bullet_color = [60,60,60] #子弹颜色
+        self.bullet_color = [0,0,200] #子弹颜色
 
 
 
