@@ -10,11 +10,11 @@ class Settings:
         self.bg_color_g = 0
         self.bg_color_b = 0
         self.ship_speed = 0.5    #飞船速度设置
-        self.bullet_speed = 0.5  #子弹速度
+        self.bullet_speed = 0.3  #子弹速度
         self.bullet_width = 3    #子弹宽度
-        self.bullet_height = 15  #子弹长度
-        self.bullet_color = [0,0,200] #子弹颜色
-
+        self.bullet_height = 10  #子弹长度
+        self.bullet_color = [255,0,0] #子弹颜色
+        self.bullets_allowed = 10 #生成子弹数量限制
 
 
 

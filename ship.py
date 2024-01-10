@@ -1,6 +1,6 @@
 import pygame
-from settings import Settings
-
+#from settings import Settings 因为在__init__()函数中的ai_game形参被赋予的是main函数的实例，
+#所以具有main函数实例的一切属性，所以不需要在进行Setting类导入也可以直接调用相关属性（非常重要，有助于理解各模块代码之间的联系）
 class Ship:
     '''管理飞船的类'''
     def __init__(self,ai_game):    #ai_game来自于main函数的实例

@@ -11,7 +11,7 @@ class AlineInvasion:
         '''初始化游戏并创建游戏资源'''
         pygame.init()   #初始化游戏模块
 
-        #不添加Setting设置类模块前的代码：参数与主程序未分开
+        #不添加Setting设置类模块前的代码：参数与主程序未分开-原始代码可以删除-注销代码0.0.0
         # self.screen_size = [1000,800]      #也可以直接使用元组固定显示窗口大小   
         # self.screen = pygame.display.set_mode(self.screen_size) #创建游戏窗口
         # self.bg_color = [0,100,230]     #设置背景颜色属性
@@ -46,9 +46,11 @@ class AlineInvasion:
         #将主程序中生成的实例传递给Ship，所以Ship类中定义的ai_game才具有主程序实例中的所有属性(重要，否则无法在ship中调取主函数生成的显示界面相应的属性)
         self.ship = Ship(self)   
         
-        #创建存储子弹的编组
-        self.bullets = pygame.sprite.Group() 
-        self.fire_bullet = False   #子弹添加使能初始化
+        #创建存储子弹的编组，该编组为pygame.sprite.Group()类生成的一个实例
+        self.bullets = pygame.sprite.Group()   
+        
+        #子弹添加使能初始化-注销代码1.0.0
+        # self.fire_bullet = False   
     def screen_color(self):
         ''' 设置背景颜色随机改变'''  
         self.bg_color[0] = randint(0,255)
@@ -69,8 +71,9 @@ class AlineInvasion:
         elif event.key == pygame.K_q:  
             sys.exit()
         elif event.key == pygame.K_SPACE:
-            self.fire_bullet = True
-            # self._fire_bullet()
+            #-注销代码1.0.0
+            # self.fire_bullet = True
+            self._fire_bullet()
 
     def _check_keyup_events(self,event):
         '''判断按键弹起事件'''
@@ -82,14 +85,31 @@ class AlineInvasion:
             self.ship.moving_up = False
         elif event.key == pygame.K_DOWN:
             self.ship.moving_down = False 
-        elif event.key == pygame.K_SPACE:
-            self.fire_bullet = False 
+        #-注销代码1.0.0
+        # elif event.key == pygame.K_SPACE:
+        #     self.fire_bullet = False 
 
     def _fire_bullet(self):
         '''创建一颗子弹，将其加入编组当中'''
-        if self.fire_bullet == True:  #按下空格连续创建子弹
+        # if self.fire_bullet == True:  #按下空格连续创建子弹--注销代码1.0.0
+        if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self) #创建子弹
             self.bullets.add(new_bullet) #加入编组
+
+    def _update_bullets(self):
+        '''更新子弹状态和删除消失的子弹'''
+        
+        #生成子弹精灵--注销代码1.0.0
+        # self._fire_bullet()
+        
+        #对编组调用update(),编组对其中每个精灵调用update(),用以更新所有子弹精灵的状态
+        self.bullets.update()          
+
+        #删除消失的子弹
+        #执行for循环时使用的列表元素不能发生改变，故需要使用该编组的副本进行遍历，然后删除掉符合要求的对应元素即可
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
 
     def _check_events(self):
         '''响应按键和鼠标事件（重要）'''
@@ -103,14 +123,14 @@ class AlineInvasion:
     
     def _update_screen(self):
         '''更新显示界面'''
-        #背景颜色填充-fill()方法
+        #背景颜色填充
         self.screen.fill(self.bg_color) 
         
-        #生成飞船
+        #绘制飞船
         self.ship.blitme()
 
-        #生成编组内每颗子弹
-        for bullet in self.bullets.sprites():
+        #绘制编组内每颗子弹
+        for bullet in self.bullets.sprites(): #bullet.sprites()方法返回一个包含所有被创建的精灵的列表
             bullet.draw_bullet()
 
         #让最近绘制的屏幕可见-屏幕事件刷新方法flip()
@@ -119,12 +139,21 @@ class AlineInvasion:
     def run_game(self):
         '''开始游戏主循环'''
         while True:
+            #检测按键和鼠标输入事件
             self._check_events()
-            # self.screen_color() #背景颜色变更
+            
+            # #屏幕颜色填充效果，不进行设置时运行游戏将在_update_screen()中调用默认背景颜色
+            # self.screen_color() 
+            
+            #飞船位置更新
             self.ship.update()
-            self._fire_bullet()
-            self.bullets.update() #对编组调用update(),编组自动对其中每个对象调用update()
+            
+            #更新子弹状态和删除消失的子弹
+            self._update_bullets() 
+            
+            #执行更新画面
             self._update_screen()
+
 
 if __name__ == '__main__':
     '''当执行文件为当前文件时，才开始运行游戏'''
