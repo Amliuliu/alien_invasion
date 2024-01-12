@@ -33,5 +33,5 @@ class Bullet(Sprite):
 
     def draw_bullet(self):
         '''绘制子弹'''
-        pygame.draw.rect(self.screen,self.color,self.rect)
+        pygame.draw.rect(self.screen,self.color,self.rect) #三个参数分别代表(1)要绘制的surface（2）要绘制的颜色（3）要绘制的矩形的位置和尺寸
 

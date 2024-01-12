@@ -4,9 +4,10 @@ from settings import Settings
 from ship import Ship
 from random import randint
 from bullet import Bullet
+from alien import Alien
 game_version = "Ver 1.0.0" #创建游戏
 
-class AlineInvasion:
+class AlienInvasion:
     def __init__(self):
         '''初始化游戏并创建游戏资源'''
         pygame.init()   #初始化游戏模块
@@ -47,10 +48,16 @@ class AlineInvasion:
         self.ship = Ship(self)   
         
         #创建存储子弹的编组，该编组为pygame.sprite.Group()类生成的一个实例
-        self.bullets = pygame.sprite.Group()   
+        self.bullets = pygame.sprite.Group()
+
+        #创建外星人编组
+        self.aliens = pygame.sprite.Group()
+        #创建外星人
+        self._creat_fleet()  #因为外星人不需要使用按键指令生成，所以此处直接进行创建
         
-        #子弹添加使能初始化-注销代码1.0.0
+        #子弹添加连续射击使能初始化-注销代码1.0.0
         # self.fire_bullet = False   
+    
     def screen_color(self):
         ''' 设置背景颜色随机改变'''  
         self.bg_color[0] = randint(0,255)
@@ -94,7 +101,7 @@ class AlineInvasion:
         # if self.fire_bullet == True:  #按下空格连续创建子弹--注销代码1.0.0
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self) #创建子弹
-            self.bullets.add(new_bullet) #加入编组
+            self.bullets.add(new_bullet) #将使用Bullet()类创建的精灵加入编组
 
     def _update_bullets(self):
         '''更新子弹状态和删除消失的子弹'''
@@ -121,6 +128,13 @@ class AlineInvasion:
             elif event.type == pygame.KEYUP:     #判断按键弹起事件
                 self._check_keyup_events(event)
     
+    def _creat_fleet(self):
+        '''创建外星人群'''
+        # 创建一个外星人
+        alien = Alien(self)
+        self.aliens.add(alien)
+    
+
     def _update_screen(self):
         '''更新显示界面'''
         #背景颜色填充
@@ -133,22 +147,25 @@ class AlineInvasion:
         for bullet in self.bullets.sprites(): #bullet.sprites()方法返回一个包含所有被创建的精灵的列表
             bullet.draw_bullet()
 
+        #使用draw()方法将存储在编组aliens中的外星人在屏幕中画出
+        self.aliens.draw(self.screen) #self.screen指绘制的surface
+
         #让最近绘制的屏幕可见-屏幕事件刷新方法flip()
         pygame.display.flip() 
     
     def run_game(self):
         '''开始游戏主循环'''
-        while True:
+        while True:  #对于对象一定要记住先更新状态再更新图像，最后刷新画面
             #检测按键和鼠标输入事件
             self._check_events()
             
             # #屏幕颜色填充效果，不进行设置时运行游戏将在_update_screen()中调用默认背景颜色
             # self.screen_color() 
             
-            #飞船位置更新
+            #飞船位置状态更新-只包含相关属性，不进行生成，生成功能在_update_scerrn中定义
             self.ship.update()
             
-            #更新子弹状态和删除消失的子弹
+            #子弹状态更新和删除消失的子弹(自动生成子弹动画)-只包含相关属性，不进行生成，生成功能在_update_scerrn中定义
             self._update_bullets() 
             
             #执行更新画面
@@ -157,7 +174,7 @@ class AlineInvasion:
 
 if __name__ == '__main__':
     '''当执行文件为当前文件时，才开始运行游戏'''
-    ai = AlineInvasion()
+    ai = AlienInvasion()
     ai.run_game()
 
 

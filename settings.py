@@ -15,6 +15,7 @@ class Settings:
         self.bullet_height = 10  #子弹长度
         self.bullet_color = [255,0,0] #子弹颜色
         self.bullets_allowed = 10 #生成子弹数量限制
+        self.alien_allowed = 20 #生成外星飞船数量
 
 
 
