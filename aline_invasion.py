@@ -130,10 +130,34 @@ class AlienInvasion:
     
     def _creat_fleet(self):
         '''创建外星人群'''
-        # 创建一个外星人
+        alien = Alien(self) #此处alien实例只是用于参数定义使用 
+        alien_width,alien_height = alien.rect.size #获取外星人宽度和高度
+        
+        #计算屏幕可生成多少列外星人
+        available_space_x = self.settings.screen_width - (2*alien_width)  #可生成外星人x区域
+        number_aliens_x = available_space_x // (2*alien_width)  #可生成x列
+        
+        #计算屏幕可生成多少行外星人
+        ship_height = self.ship.rect.height   #飞船高度
+        available_space_y = self.settings.screen_height - 3*alien_height - ship_height  #可生成外星人y区域
+        number_aliens_y = available_space_y // (2*alien_height)  #可生成Y行
+
+        #创建外星人群(x,y方向同时建立)
+        for alien_y in range(number_aliens_y):
+            for alien_number in range(number_aliens_x):
+                self._creat_alien(alien_number,alien_y)
+
+    def _creat_alien(self,alien_number,alien_y):
+        '''创建一个外星人并将其放在当前行'''
         alien = Alien(self)
+        alien_width,alien_height = alien.rect.size #获取外星人宽度和高度
+
+        alien.x = alien_width+2*alien_width*alien_number #每次循环时新生成的外星人x坐标依次改变
+        alien.y = alien_height+2*alien_height*alien_y #每次循环时新生成的外星人y坐标改变
+
+        alien.rect.x = alien.x
+        alien.rect.y = alien.y
         self.aliens.add(alien)
-    
 
     def _update_screen(self):
         '''更新显示界面'''
