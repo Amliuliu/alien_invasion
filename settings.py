@@ -10,12 +10,15 @@ class Settings:
         self.bg_color_g = 0
         self.bg_color_b = 0
         self.ship_speed = 0.5    #飞船速度设置
-        self.bullet_speed = 0.3  #子弹速度
+        self.bullet_speed = 1.5  #子弹速度
         self.bullet_width = 3    #子弹宽度
         self.bullet_height = 10  #子弹长度
         self.bullet_color = [255,0,0] #子弹颜色
         self.bullets_allowed = 10 #生成子弹数量限制
-        self.alien_allowed = 20 #生成外星飞船数量
+        self.alien_speed = 0.1  #外星人横向移动速度
+        self.fleet_drop_speed = 10 #外星人纵向移动速度
+        self.fleet_direction = 1  #外星人左右移动标记，1为右，-1为左
+        
 
 
 

@@ -42,7 +42,7 @@ class AlienInvasion:
                         ]   
 
         #创建游戏说明
-        pygame.display.set_caption(f"Aline Invasion {game_version}")   
+        pygame.display.set_caption(f"Alien Invasion {game_version}")   
         
         #将主程序中生成的实例传递给Ship，所以Ship类中定义的ai_game才具有主程序实例中的所有属性(重要，否则无法在ship中调取主函数生成的显示界面相应的属性)
         self.ship = Ship(self)   
@@ -95,6 +95,17 @@ class AlienInvasion:
         #-注销代码1.0.0
         # elif event.key == pygame.K_SPACE:
         #     self.fire_bullet = False 
+    
+    def _check_events(self):
+        '''响应按键和鼠标事件（重要）'''
+        for event in pygame.event.get():  #获取用户输入事件
+            if event.type == pygame.QUIT: #判断用户输入事件
+                sys.exit()                #退出游戏   
+            elif event.type == pygame.KEYDOWN:   #判断按键按下事件
+                self._check_keydown_events(event)    
+            elif event.type == pygame.KEYUP:     #判断按键弹起事件
+                self._check_keyup_events(event)
+
 
     def _fire_bullet(self):
         '''创建一颗子弹，将其加入编组当中'''
@@ -118,16 +129,22 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
-    def _check_events(self):
-        '''响应按键和鼠标事件（重要）'''
-        for event in pygame.event.get():  #获取用户输入事件
-            if event.type == pygame.QUIT: #判断用户输入事件
-                sys.exit()                #退出游戏   
-            elif event.type == pygame.KEYDOWN:   #判断按键按下事件
-                self._check_keydown_events(event)    
-            elif event.type == pygame.KEYUP:     #判断按键弹起事件
-                self._check_keyup_events(event)
+        '''碰撞检测和新外星人生成'''
+        self._check_bullet_alien_collisions()
+        
     
+    def _check_bullet_alien_collisions(self):
+        '''碰撞检测和新外星人生成'''
+
+        #碰撞检测，如果检测到碰撞的子弹和外星人则删除，True/False则代表检测到碰撞后是否需要删除还是保留
+        collisions = pygame.sprite.groupcollide(self.bullets,self.aliens,True,True)    
+
+        #第一轮外星人被射杀完后创建一批新的外星人
+        if not self.aliens: #检查编组是否为空
+            self.bullets.empty()  #使用empty()方法清空编组
+            self._creat_fleet()
+
+
     def _creat_fleet(self):
         '''创建外星人群'''
         alien = Alien(self) #此处alien实例只是用于参数定义使用 
@@ -148,7 +165,7 @@ class AlienInvasion:
                 self._creat_alien(alien_number,alien_y)
 
     def _creat_alien(self,alien_number,alien_y):
-        '''创建一个外星人并将其放在当前行'''
+        '''创建一个外星人阵列'''
         alien = Alien(self)
         alien_width,alien_height = alien.rect.size #获取外星人宽度和高度
 
@@ -159,6 +176,33 @@ class AlienInvasion:
         alien.rect.y = alien.y
         self.aliens.add(alien)
 
+    def _check_fleet_edges(self):
+        '''检查编组中的外星人是否位于边缘'''
+        for alien in self.aliens:
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+
+    def _change_fleet_direction(self):
+        '''外星人位于边缘时，行为做以下处理'''
+        for alien in self.aliens:
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
+
+
+    def _update_alien(self):
+        '''1.检查外星人是否处于边缘状态并做出相应行为处理
+        2.更新外新人位置'''
+        self._check_fleet_edges()
+        self.aliens.update()
+        
+        #检测外星人与飞船的碰撞事件
+        #spritecollideany()方法检测精灵和编组成员之间的碰撞事件，其形参顺序不能任意改变，如果未发生碰撞则该方法返回None值，后续代码不会执行
+        #如果找到了与精灵发生碰撞的编组成员则返回该成员
+        if pygame.sprite.spritecollideany(self.ship,self.aliens):
+            print("ship hit!!!")
+
+        
     def _update_screen(self):
         '''更新显示界面'''
         #背景颜色填充
@@ -191,6 +235,9 @@ class AlienInvasion:
             
             #子弹状态更新和删除消失的子弹(自动生成子弹动画)-只包含相关属性，不进行生成，生成功能在_update_scerrn中定义
             self._update_bullets() 
+
+            #入侵外星人位置状态更新
+            self._update_alien()
             
             #执行更新画面
             self._update_screen()
