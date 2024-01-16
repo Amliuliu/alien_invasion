@@ -31,6 +31,7 @@ class Alien(Sprite):
         '''外星人横向位置变更'''
         self.x += (self.settings.alien_speed * self.settings.fleet_direction)
         self.rect.x = self.x
+        
 
 
 

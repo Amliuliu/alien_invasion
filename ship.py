@@ -50,3 +50,9 @@ class Ship:
         '''在指定位置绘制(生成)飞船'''
         self.screen.blit(self.image,self.rect)     #生成可操作对象
 
+    def center_ship(self):
+        '''飞船位置参数重置'''
+        self.rect.midbottom = self.screen_rect.midbottom #对象在窗口默认生成的位置
+        self.x = float(self.rect.x) #重置存储飞船位置的参数
+        self.y = float(self.rect.y)
+
