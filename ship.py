@@ -1,10 +1,12 @@
 import pygame
+from pygame.sprite import Sprite #为了在窗口用飞船标记显示玩家生命，因此引入精灵，以供创建编组
 #from settings import Settings 因为在__init__()函数中的ai_game形参被赋予的是main函数的实例，
 #所以具有main函数实例的一切属性，所以不需要在进行Setting类导入也可以直接调用相关属性（非常重要，有助于理解各模块代码之间的联系）
-class Ship:
+class Ship(Sprite):
     '''管理飞船的类'''
     def __init__(self,ai_game):    #ai_game来自于main函数的实例
         '''初始化飞船并设置其初始位置'''
+        super().__init__()
         self.screen = ai_game.screen   #获取游戏窗口
         self.screen_rect = ai_game.screen.get_rect()  #获取游戏窗口形状尺寸
 
